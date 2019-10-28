@@ -10,6 +10,7 @@ import (
 	"image/color"
 	"image/jpeg"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -19,7 +20,7 @@ func main()  {
 	router.HandleFunc("/mode", mode)
 	router.HandleFunc("/mono", mono)
 	router.HandleFunc("/mosaic", mosaic)
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":" + os.Getenv("PORT"), router)
 }
 
 func mode(w http.ResponseWriter, r *http.Request)  {
