@@ -8,7 +8,6 @@ import (
 	"html/template"
 	"image"
 	"image/color"
-	"image/draw"
 	"image/jpeg"
 	"net/http"
 	"strconv"
@@ -56,39 +55,37 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 
 	for y := bounds.Min.Y; y <= bounds.Max.Y; y += tileSize {
 		for x := bounds.Min.X; x <= bounds.Max.X; x += tileSize {
-			tile := image.NewRGBA(image.Rect(x, y, x + tileSize, y + tileSize))
-			tileBounds := tile.Bounds()
-
-			red, green, blue := 0, 0, 0
-			for j := y; j <= y +tileSize; j++ {
-				for i := x; i <= x + tileSize; i++ {
-					r, g, b, _ := original.At(i, j).RGBA()
-					red += int(r)
-					green += int(g)
-					blue += int(b)
+			var s int
+			var redSum, greenSum, blueSum float64
+			for j := y; j < y + tileSize; j++ {
+				for i := x; i < x + tileSize; i++ {
+					if j <= bounds.Max.Y && i <= bounds.Max.X {
+						c := color.RGBAModel.Convert(original.At(i, j)).(color.RGBA)
+						red, green, blue := c.R, c.G, c.B
+						redSum += float64(red)
+						greenSum += float64(green)
+						blueSum += float64(blue)
+						s = tileSize * tileSize
+					} else if j <= bounds.Max.Y && i > bounds.Max.X {
+						s = tileSize * (tileSize - (x + tileSize - bounds.Max.X))
+					} else if i <= bounds.Max.X && j > bounds.Max.Y {
+						s = tileSize * (tileSize - (y + tileSize - bounds.Max.Y))
+					}
 				}
 			}
-			redAV := uint8(red / tileSize)
-			greenAV := uint8(green / tileSize)
-			blueAV := uint8(blue / tileSize)
+			redAV := uint8(redSum / float64(s))
+			greenAV := uint8(greenSum / float64(s))
+			blueAV := uint8(blueSum / float64(s))
 
-			// 平均色で塗りつぶす
-			for j := tileBounds.Min.Y; j <= tileBounds.Max.Y; j++ {
-				for i := tileBounds.Min.X; i <= tileBounds.Max.X; i++ {
-					a := color.RGBAModel.Convert(original.At(i, j)).(color.RGBA).A
-					tile.Set(i, j, color.RGBA{R: redAV, G: greenAV, B: blueAV, A: a})
+			for j := y; j < y + tileSize; j++ {
+				for i := x; i < x + tileSize; i++ {
+					if i < bounds.Max.X && j < bounds.Max.Y {
+						newImage.Set(i, j, color.RGBA{redAV, greenAV, blueAV, 255})
+					}
 				}
 			}
-			//fmt.Println(tile)
-
-			t := tile.SubImage(tile.Bounds())
-			tileBounds = image.Rect(x, y, x + tileSize, y + tileSize)
-			//fmt.Println(t)
-			//fmt.Println(tileBounds)
-			draw.Draw(newImage, tileBounds, t, image.Point{x,y}, draw.Src)
 		}
 	}
-	fmt.Println(newImage)
 
 
 	// 元の画像
