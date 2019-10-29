@@ -9,8 +9,9 @@
 <body>
 <div class="container">
     <h1>Mosaic</h1>
-    <h4>モザイクアートにしたい画像を選んでください</h4>
+    <h4>画像にモザイク加工を施します</h4>
     <form action="/mosaic" method="post" enctype="multipart/form-data">
+        <p>モザイクタイルの大きさを選んでください</p>
         <select name="tile_size" class="form-control input-lg">
             <option value="10" selected>10</option>
             <option value="20">20</option>
@@ -19,6 +20,7 @@
             <option value="50">50</option>
             <option value="100">100</option>
         </select>
+        <p>モザイク処理したい画像を選んでください</p>
         <input type="file" name="image" class="form-control input-lg"/>
         <button type="submit" class="btn btn-dark">Go!</button>
     </form>

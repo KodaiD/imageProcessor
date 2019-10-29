@@ -10,14 +10,14 @@
 <div class="container">
     <div class="col-md-6">
         <img src="data:image/jpg;base64,{{ .original }}" width="100%">
-        <div class="lead">Original</div>
+        <div>Original</div>
     </div>
     <div class="col-md-6">
         <img src="data:image/jpg;base64,{{ .new }}" width="100%">
-        <div class="lead">Mono</div>
+        <div>Mono</div>
     </div>
     <div class="col-mod-12 center">
-        <a class="btn btn-lg btn-info" href="/">Go Back</a>
+        <a class="btn btn-lg btn-info" type="button" onclick="history.back()">Go Back</a>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

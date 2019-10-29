@@ -10,7 +10,6 @@ import (
 	"image/color"
 	"image/jpeg"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -20,7 +19,8 @@ func main()  {
 	router.HandleFunc("/mode", mode)
 	router.HandleFunc("/mono", mono)
 	router.HandleFunc("/mosaic", mosaic)
-	http.ListenAndServe(":" + os.Getenv("PORT"), router)
+	//http.ListenAndServe(":" + os.Getenv("PORT"), router)
+	http.ListenAndServe(":8080", router)
 }
 
 func mode(w http.ResponseWriter, r *http.Request)  {
@@ -60,7 +60,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 			var redSum, greenSum, blueSum float64
 			for j := y; j < y + tileSize; j++ {
 				for i := x; i < x + tileSize; i++ {
-					if j <= bounds.Max.Y && i <= bounds.Max.X {
+					if j < bounds.Max.Y && i < bounds.Max.X {
 						c := color.RGBAModel.Convert(original.At(i, j)).(color.RGBA)
 						red, green, blue := c.R, c.G, c.B
 						redSum += float64(red)
