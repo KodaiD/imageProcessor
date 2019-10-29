@@ -9,6 +9,7 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
+	"image/png"
 	"net/http"
 	"strconv"
 )
@@ -125,7 +126,10 @@ func mono(w http.ResponseWriter, r *http.Request) {
 
 	// 元の画像
 	buf1 := new(bytes.Buffer)
-	jpeg.Encode(buf1, original, nil)
+	err := jpeg.Encode(buf1, original, nil)
+	if err != nil {
+		png.Encode(buf1, original)
+	}
 	originalStr := base64.StdEncoding.EncodeToString(buf1.Bytes())
 
 	// 加工後
