@@ -21,6 +21,7 @@ func main()  {
 	router.HandleFunc("/mode", mode)
 	router.HandleFunc("/mono", mono)
 	router.HandleFunc("/mosaic", mosaic)
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.ListenAndServe(":" + os.Getenv("PORT"), router)
 	//http.ListenAndServe(":8080", router)
 }
