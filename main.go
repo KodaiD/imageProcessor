@@ -11,25 +11,19 @@ import (
 	"image/jpeg"
 	"image/png"
 	"net/http"
+	"os"
 	"strconv"
 )
 
 func main()  {
 	router := mux.NewRouter()
-	files := http.FileServer(http.Dir("public"))
-	router.Handle("/static/", http.StripPrefix("/static/", files))
 	router.HandleFunc("/", route)
 	router.HandleFunc("/mode", mode)
 	router.HandleFunc("/mono", mono)
 	router.HandleFunc("/mosaic", mosaic)
-<<<<<<< HEAD
-	//http.ListenAndServe(":" + os.Getenv("PORT"), router)
-	http.ListenAndServe(":8080", router)
-=======
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.ListenAndServe(":" + os.Getenv("PORT"), router)
 	//http.ListenAndServe(":8080", router)
->>>>>>> tmp
 }
 
 func mode(w http.ResponseWriter, r *http.Request)  {
