@@ -1,9 +1,8 @@
 # imageProcessor
 imageProcessorはあなたの画像を加工します。  
 
-# DEMO  
-![モザイク加工]()
-
+# DEMO
+![モザイク画像](https://user-images.githubusercontent.com/52027276/68106285-777b8500-ff24-11e9-984a-b49f8fc9db83.png)  
 
 # アプリの機能
 imageProcessorは以下の機能を備えています。  
