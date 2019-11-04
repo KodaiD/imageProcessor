@@ -5,28 +5,23 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Image Processor</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="static/css/studio.css" type="text/css">
+    <link rel="stylesheet" href="../static/css/result.css" type="text/css">
 </head>
 <body>
 <div class="container">
-    <h1>Mosaic</h1>
-    <h4>画像にモザイク加工を施します</h4>
-    <form action="/mosaic" method="post" enctype="multipart/form-data">
-        <p>モザイクタイルの大きさ</p>
-        <select name="tile_size" class="form-control input-lg">
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="40">40</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="150">150</option>
-            <option value="200">200</option>
-        </select>
-        <p>モザイク処理したい画像</p>
-        <input type="file" name="image" class="form-control input-lg"/>
-        <button type="submit" class="btn btn-dark">Go!</button>
-    </form>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="data:image/jpg;base64,{{ .original }}" width="100%">
+            <div>Original</div>
+        </div>
+        <div class="col-md-6">
+            <img src="data:image/jpg;base64,{{ .new }}" width="100%">
+            <div>Mosaic</div>
+        </div>
+        <div class="col-mod-12 center">
+            <button class="btn btn-dark" type="button" onclick="history.back()">Go Back</button>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

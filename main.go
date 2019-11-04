@@ -11,7 +11,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -22,8 +21,8 @@ func main()  {
 	router.HandleFunc("/mono", mono)
 	router.HandleFunc("/mosaic", mosaic)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.ListenAndServe(":" + os.Getenv("PORT"), router)
-	//http.ListenAndServe(":8080", router)
+	//http.ListenAndServe(":" + os.Getenv("PORT"), router)
+	http.ListenAndServe(":8080", router)
 }
 
 func mode(w http.ResponseWriter, r *http.Request)  {
@@ -32,19 +31,19 @@ func mode(w http.ResponseWriter, r *http.Request)  {
 		fmt.Println("error: ", err)
 	}
 	if r.Form["mode"][0] == "mosaic" {
-		t, _ := template.ParseFiles("studio1.html")
+		t, _ := template.ParseFiles("templates/studio1.html")
 		t.Execute(w, nil)
 	} else if r.Form["mode"][0] == "mono" {
-		t, _ := template.ParseFiles("studio2.html")
+		t, _ := template.ParseFiles("templates/studio2.html")
 		t.Execute(w, nil)
 	} else {
-		t, _ := template.ParseFiles("home.html")
+		t, _ := template.ParseFiles("templates/home.html")
 		t.Execute(w, nil)
 	}
 }
 
 func route(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("home.html")
+	t, _ := template.ParseFiles("templates/home.html")
 	t.Execute(w, nil)
 }
 
@@ -107,7 +106,7 @@ func mosaic(w http.ResponseWriter, r *http.Request) {
 		"new":   newStr,
 	}
 
-	t, _ := template.ParseFiles("result1.html")
+	t, _ := template.ParseFiles("templates/result1.html")
 	t.Execute(w, images)
 }
 
@@ -144,6 +143,6 @@ func mono(w http.ResponseWriter, r *http.Request) {
 		"new":   newStr,
 	}
 
-	t, _ := template.ParseFiles("result2.html")
+	t, _ := template.ParseFiles("templates/result2.html")
 	t.Execute(w, images)
 }
