@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
-	"os"
 )
 
 func main()  {
@@ -15,8 +14,8 @@ func main()  {
 	router.HandleFunc("/mono", Mono)
 	router.HandleFunc("/mosaic", Mosaic)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.ListenAndServe(":" + os.Getenv("PORT"), router)
-	//http.ListenAndServe(":8080", router)
+	//http.ListenAndServe(":" + os.Getenv("PORT"), router)
+	http.ListenAndServe(":8080", router)
 }
 
 func mode(w http.ResponseWriter, r *http.Request)  {
