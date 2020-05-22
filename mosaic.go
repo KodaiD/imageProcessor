@@ -3,24 +3,23 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
-	"html/template"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/jpeg"
-	"image/png"
-	"net/http"
-	"strconv"
+	"log"
+	"os"
 	"sync"
 	"time"
 )
 
-func Mosaic(w http.ResponseWriter, r *http.Request) {
+func MosaicConcurrent() (time.Duration, string) {
 	start := time.Now()
-	tileSize, _ := strconv.Atoi(r.FormValue("tile_size"))
-	r.ParseMultipartForm(10485760)
-	file, _, _ := r.FormFile("image")
+	tileSize := 10
+	file, err := os.Open("test.jpg")
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer file.Close()
 
 	original, _, _ := image.Decode(file)
@@ -32,23 +31,7 @@ func Mosaic(w http.ResponseWriter, r *http.Request) {
 	c := combine(bounds, c1, c2, c3, c4)
 	newImage := <-c
 	end := time.Now()
-	fmt.Println(end.Sub(start))
-
-	// before process
-	buf1 := new(bytes.Buffer)
-	err := jpeg.Encode(buf1, original, nil)
-	if err != nil {
-		png.Encode(buf1, original)
-	}
-	originalStr := base64.StdEncoding.EncodeToString(buf1.Bytes())
-
-	images := map[string]string{
-		"original": originalStr,
-		"new":   newImage,
-	}
-
-	t, _ := template.ParseFiles("templates/result1.html")
-	t.Execute(w, images)
+	return end.Sub(start), newImage
 }
 
 func getAverageColor(original image.Image, x int, y int, bounds image.Rectangle, tileSize int) (uint8, uint8, uint8) {
@@ -139,4 +122,38 @@ func combine(r image.Rectangle, c1, c2, c3, c4 <-chan image.Image) <-chan string
 		c <- base64.StdEncoding.EncodeToString(buf2.Bytes())
 	}()
 	return c
+}
+
+func Mosaic() (time.Duration, string) {
+	start := time.Now()
+	tileSize := 10
+	file, err := os.Open("test.jpg")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	original, _, _ := image.Decode(file)
+	bounds := original.Bounds()
+	newImage := image.NewRGBA(bounds)
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y += tileSize {
+		for x := bounds.Min.X; x < bounds.Max.X; x += tileSize {
+			redAV, greenAV, blueAV := getAverageColor(original, x, y, bounds, tileSize)
+			for j := y; j < y + tileSize; j++ {
+				for i := x; i < x + tileSize; i++ {
+					if i < bounds.Max.X && j < bounds.Max.Y {
+						newImage.Set(i, j, color.RGBA{redAV, greenAV, blueAV, 255})
+					}
+				}
+			}
+		}
+	}
+
+	// after process
+	buf2 := new(bytes.Buffer)
+	jpeg.Encode(buf2, newImage, nil)
+	newStr := base64.StdEncoding.EncodeToString(buf2.Bytes())
+	end := time.Now()
+	return end.Sub(start), newStr
 }

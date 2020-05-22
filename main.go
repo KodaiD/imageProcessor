@@ -1,42 +1,19 @@
 package main
 
-import (
-	"fmt"
-	"github.com/gorilla/mux"
-	"html/template"
-	"net/http"
-	"os"
-)
+import "fmt"
 
 func main()  {
-	router := mux.NewRouter()
-	router.HandleFunc("/", route)
-	router.HandleFunc("/mode", mode)
-	router.HandleFunc("/mono", Mono)
-	router.HandleFunc("/mosaic", Mosaic)
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.ListenAndServe(":" + os.Getenv("PORT"), router)
-	//http.ListenAndServe(":8080", router)
-}
-
-func mode(w http.ResponseWriter, r *http.Request)  {
-	err := r.ParseForm()
-	if err != nil {
-		fmt.Println("error: ", err)
+	total := 0.0
+	for i := 0; i < 10; i++ {
+		duration, _ := MosaicConcurrent()
+		total += duration.Seconds()
 	}
-	if r.Form["mode"][0] == "mosaic" {
-		t, _ := template.ParseFiles("templates/studio1.html")
-		t.Execute(w, nil)
-	} else if r.Form["mode"][0] == "mono" {
-		t, _ := template.ParseFiles("templates/studio2.html")
-		t.Execute(w, nil)
-	} else {
-		t, _ := template.ParseFiles("templates/home.html")
-		t.Execute(w, nil)
-	}
-}
+	fmt.Printf("4-partition: %v sec\n", total / 10.0)
 
-func route(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/home.html")
-	t.Execute(w, nil)
+	total = 0.0
+	for i := 0; i < 10; i++ {
+		duration, _ := Mosaic()
+		total += duration.Seconds()
+	}
+	fmt.Printf("no-partition: %v sec\n", total / 10.0)
 }
