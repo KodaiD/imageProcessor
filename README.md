@@ -4,7 +4,7 @@ This app applies mosaic or grayscale processing to images.
 # Benchmark
 There is a concurrent version. (Look at the "concurrent branch").
 
-You can compare the parallel version to the regular version as a command line app.(Look at the "compare branch").
+You can compare the concurrent(parallel) version to the regular version as a command line app.(Look at the "compare branch").
 ```bash
 ❯❯❯ ./imageProcessor
 4-partition: 0.7648123247 sec
